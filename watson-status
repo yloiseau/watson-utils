@@ -1,0 +1,10 @@
+#!/bin/bash
+
+watson status |
+sed -r '
+    s!^Project !!g;
+    s!([^ ]+).+started !\1 (!g;
+    s! ago .*!)!g
+    '
+
+

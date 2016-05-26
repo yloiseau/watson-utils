@@ -1,0 +1,59 @@
+#!/bin/bash
+#
+# Copyright © 2016 Yannick Loiseau <me@yloiseau.net>
+# This work is free. You can redistribute it and/or modify it under the
+# terms of the Do What The Fuck You Want To Public License, Version 2,
+# as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
+#
+#==============================================================================
+# Script to check if you are working on a project with Watson and display a
+# notification when:
+# - you are working on the same project for more than $ALERT_TIME (seconds)
+# - you are not working on a project
+#
+# The purpose is to remind you to start tracking your time, or to check is you
+# have forgotten to change the project (and remind you to take a break).
+#
+# Dependencies:
+# - Watson: http://tailordev.github.io/Watson/
+# - notify-send: (libnotify-bin on Debian)
+#
+# Usage:
+# 1. Customize the alert message and time.
+# 1a. Customize DISPLAY if needed
+# 2. Set a cron task to run the script. E.g. (every 5min)
+#
+#     */5 *  *   *   *     $HOME/bin/watson-notify
+#
+#==============================================================================
+
+set -e
+
+ALERT_TIME=7200 # 2 hours
+ALERT_MESSAGE="Still working on %s?\nTime for a break."
+ALERT_NOTIF="-u low -t 5000"
+
+QUESTION_MESSAGE="What are you doing?"
+QUESTION_NOTIF="-u critical -t 10000"
+
+WATSON_STATUS="python3 -m watson status"
+NOTIFY="notify-send"
+export DISPLAY=:0
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+$WATSON_STATUS |
+sed -r '
+    s!^Project !!g;
+    s!([^ ]+).+started .* ago \(([^)]+)\)!\1 \2!g
+' | while read name date; do
+    if [ $name == "No" -a "$date" == "project started" ] ; then
+        $NOTIFY $QUESTION_NOTIF "Watson" "$QUESTION_MESSAGE"
+        exit 0
+    fi
+    now=$(date +%s)
+    ts=$(date -d "$(echo $date | tr '.' '-')" +%s)
+    duration=$((now - ts))
+    if [ $duration -ge $ALERT_TIME ] ; then
+        $NOTIFY $ALERT_NOTIF "Watson" "$(printf "$ALERT_MESSAGE" $name)"
+    fi
+done

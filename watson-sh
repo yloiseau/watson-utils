@@ -1,0 +1,78 @@
+#!/bin/bash
+#
+# Copyright © 2016 Yannick Loiseau <me@yloiseau.net>
+# This work is free. You can redistribute it and/or modify it under the
+# terms of the Do What The Fuck You Want To Public License, Version 2,
+# as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
+#
+
+set -e
+
+AUTOCOMPLETE=$HOME/.config/watson/complete
+
+function usage {
+    cat <<EOC
+Usage: $0 [OPTION]
+
+  Interactive shell for Watson.
+  For improve experience, use it with rlwrap. For instance:
+  alias watson-sh='rlwrap -pcyan -f $HOME/.config/watson/complete $HOME/bin/watson-sh'
+
+Options:
+  --help    : Show this message and exit
+  --update  : Update the completion cache
+
+Commands:
+  update    : Update the completion cache
+  quit      : Exit the shell
+  exit      : Exit the shell
+  any valid watson commands
+EOC
+}
+
+
+function updatecomp {
+    cat <<EOC >| $AUTOCOMPLETE
+cancel
+config
+edit
+frames
+help
+log
+merge
+projects
+remove
+report
+restart
+start
+status
+stop
+sync
+tags
+
+update
+quit
+exit
+
+EOC
+    watson projects >> $AUTOCOMPLETE
+    echo "" >> $AUTOCOMPLETE
+    watson tags | sed 's/^/+/g' >> $AUTOCOMPLETE
+}
+
+case $1 in
+    -u|--update) updatecomp; exit 0 ;;
+    -h|--help) usage; exit 0 ;;
+esac
+
+echo "Interactive Watson shell. Type 'exit' or 'quit' to exit."
+echo "Type 'help' for more information"
+while read -p "watson> "; do
+    case $REPLY in
+        update) updatecomp;;
+        quit|exit) exit 0;;
+        "") continue ;;
+        *) python3 -m watson $REPLY
+    esac
+done
+

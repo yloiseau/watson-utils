@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+
+nbmonth=${1:-12}; shift
+
+seq $nbmonth -1 1 | while read m ; do
+    watson report \
+        -f $(date -d "$m month ago" +%Y-%m) \
+        -t $(date -d "$((m-1)) month ago" +%Y-%m) \
+        "$@"
+done
