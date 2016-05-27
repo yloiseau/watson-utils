@@ -5,7 +5,8 @@ This is just some quick scripts to use with the wonderful [Watson](https://githu
 
 ## `watson-sh`
 
-An interactive shell for Watson.
+An interactive shell for Watson. It simply dispatch to `watson` itself, but keep the context (current project, date span, …)
+Use it with `rlwrap` (see `watson-sh --help`) for improved experience (command history, completion, …) 
 
 ## `watson-notify`
 

@@ -6,28 +6,40 @@
 # as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
 #
 
-set -e
-
-AUTOCOMPLETE=$HOME/.config/watson/complete
-
+CONFIG_DIR=$HOME/.config/watson
+if [ ! -z $XDG_CONFIG_HOME ] ; then
+    CONFIG_DIR=$XDG_CONFIG_HOME/watson
+fi
+if [ ! -z $WATSON_DIR ] ; then
+    CONFIG_DIR=$WATSON_DIR
+fi
+AUTOCOMPLETE=${CONFIG_DIR}/complete
+WATSON="python3 -m watson"
 function usage {
     cat <<EOC
 Usage: $0 [OPTION]
 
-  Interactive shell for Watson.
-  For improve experience, use it with rlwrap. For instance:
-  alias watson-sh='rlwrap -pcyan -f $HOME/.config/watson/complete $HOME/bin/watson-sh'
+  An iteractive shell for Watson.
+  For improved experience, use it with rlwrap. For instance:
+      alias watson-sh='rlwrap -pcyan -f $AUTOCOMPLETE $0'
 
 Options:
-  --help    : Show this message and exit
-  --update  : Update the completion cache
+  --help    Show this message and exit
+  --update  Update the completion cache
 
 Commands:
-  update    : Update the completion cache
-  quit      : Exit the shell
-  exit      : Exit the shell
+  update  Update the completion cache
+  quit    Exit the shell
+  exit    Exit the shell
+  ls      Alias for projets or report according to the context
+  cd      Set the current project
+  from    Set the current starting date
+  to      Set the current ending date
+
   any valid watson commands
+
 EOC
+    $WATSON help
 }
 
 
@@ -53,6 +65,10 @@ tags
 update
 quit
 exit
+ls
+cd
+from
+to
 
 EOC
     watson projects >> $AUTOCOMPLETE
@@ -60,19 +76,96 @@ EOC
     watson tags | sed 's/^/+/g' >> $AUTOCOMPLETE
 }
 
+function _filter_options {
+    local options=""
+    if [ "x$CURRENT_PROJECT" != "x"  ] ; then
+        options="$options -p $CURRENT_PROJECT"
+    fi
+    if [ "x$CURRENT_FROM" != "x" ] ; then
+        options="$options -f $(date -d "$CURRENT_FROM" -Iminutes)"
+    fi
+    if [ "x$CURRENT_TO" != "x"  ] ; then
+        options="$options -t $(date -d "$CURRENT_TO" -Iminutes)"
+    fi
+    echo $options
+}
+
+function _prompt {
+    local prompt="watson"
+    if [ "x$CURRENT_PROJECT" != "x" ] ; then
+        prompt="${prompt}:${CURRENT_PROJECT}"
+    fi
+    if [ "x$CURRENT_FROM" != "x" ] ; then
+        prompt="${prompt}:${CURRENT_FROM}"
+    fi
+    if [ "x$CURRENT_TO" != "x" ] ; then
+        prompt="${prompt} → ${CURRENT_TO}"
+    fi
+    prompt="${prompt}> "
+    echo "$prompt"
+}
+
+function dispatch {
+    local cmd=$1; shift
+    case $cmd in
+        "") return ;;
+        update) updatecomp;;
+        quit|exit) exit 0;;
+        ls)
+            if [ "x$CURRENT_PROJECT" != "x" ] ; then
+                dispatch report $@
+            else
+                dispatch projects $@
+            fi
+            ;;
+        cd)
+            if [ "$1" == ".." -o "x$1" == "x" ] ; then
+                CURRENT_PROJECT='';
+            else
+                CURRENT_PROJECT=$1
+            fi
+            ;;
+        from)
+            if [ "x$1" == "x" ] ; then
+                CURRENT_FROM='';
+            else
+                CURRENT_FROM="$@"
+            fi
+            ;;
+        to)
+            if [ "x$1" == "x" ] ; then
+                CURRENT_TO='';
+            else
+                CURRENT_TO="$@"
+            fi
+            ;;
+
+        log) $WATSON log $(_filter_options) $@ ;;
+        report) $WATSON report $(_filter_options) $@ ;;
+        start)
+            if [ "x$CURRENT_PROJECT" != "x" ] ; then
+                $WATSON start "$CURRENT_PROJECT" $@
+            else
+                $WATSON start "$@"
+            fi
+            ;;
+        help) usage;;
+        *) $WATSON $cmd $@;;
+    esac
+}
+
 case $1 in
     -u|--update) updatecomp; exit 0 ;;
     -h|--help) usage; exit 0 ;;
 esac
 
-echo "Interactive Watson shell. Type 'exit' or 'quit' to exit."
+
+CURRENT_PROJECT=''
+CURRENT_FROM=''
+CURRENT_TO=''
+echo "Interactive Watson shell. Type 'Ctrl+D', 'exit' or 'quit' to exit."
 echo "Type 'help' for more information"
-while read -p "watson> "; do
-    case $REPLY in
-        update) updatecomp;;
-        quit|exit) exit 0;;
-        "") continue ;;
-        *) python3 -m watson $REPLY
-    esac
+while read -p "$(_prompt)" ; do
+    dispatch $REPLY
 done
 

@@ -1,3 +1,4 @@
+LOCAL_BIN=$(HOME)/bin
 
 check_watson:
 	@which watson > /dev/null && echo "watson \033[32mOK\033[00m" || echo "watson \033[31mNOT FOUND\033[00m"
@@ -13,3 +14,8 @@ check_task:
 
 check: check_watson check_notify check_rlwrap check_task
 
+$(LOCAL_BIN)/watson-sh: watson-sh
+	@echo "Install $< to $@"
+	@install $< $@
+
+install: $(LOCAL_BIN)/watson-sh
