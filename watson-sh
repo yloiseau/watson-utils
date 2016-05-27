@@ -33,7 +33,8 @@ Commands:
   exit    Exit the shell
   ls      Alias for projets or report according to the context
   cd      Set the current project
-  from    Set the current starting date
+  from    Set the current starting date. Accepts any format understood by
+          'date', e.g. "1 week ago"
   to      Set the current ending date
 
   any valid watson commands

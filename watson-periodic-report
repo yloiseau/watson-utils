@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# Copyright © 2016 Yannick Loiseau <me@yloiseau.net>
+# This work is free. You can redistribute it and/or modify it under the
+# terms of the Do What The Fuck You Want To Public License, Version 2,
+# as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
+#
+
+set -e
+
+function usage {
+    cat <<EOC
+Usage: $0 [options] [nb_period] [period_type] [filters]
+
+Display watson reports for each given period.
+
+Options:
+
+  -h | --help  Display this help
+
+Arguments:
+  nb_periods   the number of period to display
+  period_type  a 'date' compatible period (e.g. year, month, week)
+  filters      Watson report filters (project, tags). 
+               See 'watson report --help'
+EOC
+}
+
+case $1 in 
+    -h|--help) usage; exit 0;;
+esac
+
+nb_periods=${1:-12}; shift
+period_type=${1:-month}; shift
+
+seq $nb_periods -1 1 | while read period ; do
+    watson report \
+        -f $(date -d "$period $period_type ago" -Idate) \
+        -t $(date -d "$((period-1)) $period_type ago" -Idate) \
+        "$@"
+done

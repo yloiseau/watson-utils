@@ -35,9 +35,9 @@ Dependency:
 - `notify-send`: (libnotify-bin on Debian)
 
 
-## `watson-monthly-report`
+## `watson-periodic-report`
 
-Print Watson reports by month.
+Print Watson reports by time periods.
 
 ## `watson-status`
 
