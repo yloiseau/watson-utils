@@ -5,41 +5,90 @@
 # terms of the Do What The Fuck You Want To Public License, Version 2,
 # as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
 #
-#==============================================================================
-# Script to check if you are working on a project with Watson and display a
-# notification when:
-# - you are working on the same project for more than $ALERT_TIME (seconds)
-# - you are not working on a project
-#
-# The purpose is to remind you to start tracking your time, or to check is you
-# have forgotten to change the project (and remind you to take a break).
-#
-# Dependencies:
-# - Watson: http://tailordev.github.io/Watson/
-# - notify-send: (libnotify-bin on Debian)
-#
-# Usage:
-# 1. Customize the alert message and time.
-# 1a. Customize DISPLAY if needed
-# 2. Set a cron task to run the script. E.g. (every 5min)
-#
-#     */5 *  *   *   *     $HOME/bin/watson-notify
-#
-#==============================================================================
-
 set -e
 
+CONFIG_DIR=$HOME/.config/watson
+if [ ! -z $XDG_CONFIG_HOME ] ; then
+    CONFIG_DIR=$XDG_CONFIG_HOME/watson
+fi
+if [ ! -z $WATSON_DIR ] ; then
+    CONFIG_DIR=$WATSON_DIR
+fi
+WATSON_STATUS="python3 -m watson status"
+NOTIFY="notify-send"
+DISPLAY=:0
+
+# Alert parameters: can be redefined in $WATSON_DIR/alert.
 ALERT_TIME=7200 # 2 hours
 ALERT_MESSAGE="Still working on %s?\nTime for a break."
 ALERT_NOTIF="-u low -t 5000"
-
 QUESTION_MESSAGE="What are you doing?"
 QUESTION_NOTIF="-u critical -t 10000"
 
-WATSON_STATUS="python3 -m watson status"
-NOTIFY="notify-send"
-export DISPLAY=:0
+[ -f "$CONFIG_DIR/alert" ] && source "$CONFIG_DIR/alert"
+
+export DISPLAY
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+function usage {
+    cat <<EOC
+A notification for Watson <https://github.com/TailorDev/Watson>.
+
+This script checks if you are working on a project with Watson and display a
+notification when:
+- you are working on the same project for more than $ALERT_TIME (seconds)
+- you are not working on a project
+
+The purpose is to remind you to start tracking your time, or to check if you
+have forgotten to change the project (and remind you to take a break).
+
+Usage:
+0. Save this script somewhere (e.g. $HOME/bin)
+1. Customize the alert message and time. See '$0 -c'
+1a. Customize DISPLAY if needed
+2. Set a cron task to run the script. E.g. (every 5min)
+
+    */5 *  *   *   *     $HOME/bin/watson-notify
+
+Options:
+  -h | --help    display this help
+  -c | --config  display the current configuration
+EOC
+}
+
+function config {
+    cat <<EOC
+# $CONFIG_DIR/alert
+# watson-notify configuration.
+
+## Alert
+
+# When to say to stop the task (in seconds)
+ALERT_TIME=${ALERT_TIME}
+
+# What to display if working for more than ALERT_TIME
+ALERT_MESSAGE="${ALERT_MESSAGE}"
+
+# How the notification is displayed (see 'notify-send --help')
+ALERT_NOTIF="${ALERT_NOTIF}"
+
+## Reminder
+
+# What to display if not working
+QUESTION_MESSAGE="${QUESTION_MESSAGE}"
+
+# How the notification is displayed (see 'notify-send --help')
+QUESTION_NOTIF="${QUESTION_NOTIF}"
+
+## Display for notifications
+DISPLAY=${DISPLAY}
+EOC
+}
+
+case $1 in
+    -h|--help) usage; exit 0;;
+    -c|--config) config; exit 0;;
+esac
 
 $WATSON_STATUS |
 sed -r '

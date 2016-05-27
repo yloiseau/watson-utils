@@ -8,9 +8,32 @@ This is just some quick scripts to use with the wonderful [Watson](https://githu
 An interactive shell for Watson. It simply dispatch to `watson` itself, but keep the context (current project, date span, …)
 Use it with `rlwrap` (see `watson-sh --help`) for improved experience (command history, completion, …) 
 
+Optional dependency:
+- `rlwrap`
+
 ## `watson-notify`
 
 A cron script to alert you when you forgot to start Watson.
+Displays a notification when:
+- you are working on the same project for a long period,
+- you are not working on a project.
+
+The purpose is to remind you to start tracking your time, or to check if you
+have forgotten to change the project (and remind you to take a break).
+
+Uses `notify-send` (from `libnotify`) to send the alert.
+
+Put the script in a `cron` task. For instance:
+
+    */5 *  *   *   *     $HOME/bin/watson-notify
+
+You can redefined the alert parameters in the `$WATSON_DIR/alert` file which will be sourced if present. Run `watson-notify -c` to display the current configuration.
+
+    watson-notify -c > $HOME/.config/watson/alert
+
+Dependency:
+- `notify-send`: (libnotify-bin on Debian)
+
 
 ## `watson-monthly-report`
 

@@ -14,8 +14,8 @@ check_task:
 
 check: check_watson check_notify check_rlwrap check_task
 
-$(LOCAL_BIN)/watson-sh: watson-sh
+$(LOCAL_BIN)/%: %
 	@echo "Install $< to $@"
 	@install $< $@
 
-install: $(LOCAL_BIN)/watson-sh
+install: $(LOCAL_BIN)/watson-sh $(LOCAL_BIN)/watson-notify
