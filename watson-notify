@@ -53,6 +53,9 @@ Usage:
 Options:
   -h | --help    display this help
   -c | --config  display the current configuration
+
+Files:
+  $CONFIG_DIR/alert  contains custom options
 EOC
 }
 
@@ -75,6 +78,9 @@ ALERT_NOTIF="${ALERT_NOTIF}"
 ## Reminder
 
 # What to display if not working
+# Trick: to use a random message, put one message by line in a file (e.g.
+# '$CONFIG_DIR/messages') and use
+# QUESTION_MESSAGE="\$(shuf -n 1 \$CONFIG_DIR/messages)"
 QUESTION_MESSAGE="${QUESTION_MESSAGE}"
 
 # How the notification is displayed (see 'notify-send --help')
