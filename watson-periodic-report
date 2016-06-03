@@ -23,6 +23,16 @@ Arguments:
   period_type  a 'date' compatible period (e.g. year, month, week)
   filters      Watson report filters (project, tags). 
                See 'watson report --help'
+
+Example:
+
+Print a monthly report for the last 5 months
+
+  watson-periodic-report 5 months
+
+Print a weekly report for the last 10 weeks
+
+  watson-periodic-report 10 weeks
 EOC
 }
 

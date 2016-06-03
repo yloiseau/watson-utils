@@ -18,4 +18,13 @@ $(LOCAL_BIN)/%: %
 	@echo "Install $< to $@"
 	@install -m 555 $< $@
 
-install: $(LOCAL_BIN)/watson-sh $(LOCAL_BIN)/watson-notify $(LOCAL_BIN)/watson-periodic-report
+install: $(LOCAL_BIN)/watson-sh $(LOCAL_BIN)/watson-notify $(LOCAL_BIN)/watson-periodic-report $(HOME)/.task/hooks/on-modify-watson.py $(HOME)/.config/i3/watson-status
+
+$(HOME)/.task/hooks/on-modify-watson.py: on-modify-watson.py
+	@echo "Install $< to $@"
+	@install -m 555 $< $@
+
+$(HOME)/.config/i3/watson-status: watson-status
+	@echo "Install $< to $@"
+	@install -m 555 $< $@
+

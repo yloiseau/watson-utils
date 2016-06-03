@@ -6,6 +6,17 @@
 # as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
 #
 
+case $1 in
+    -h|--help) 
+        cat <<EOC
+Watson status for I3 (conky).
+
+Save in e.g. ~/.config/i3/watson-status and add
+{"full_text": "\${texeci 5 ~/.config/i3/watson-status}"}
+to your conky config file.
+EOC
+esac
+
 watson status |
 sed -r '
     s!^Project !!g;

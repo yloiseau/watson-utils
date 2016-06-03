@@ -18,34 +18,6 @@ To install, copy in ~/.task/hooks/on-modify-tw-watson.py and make executable.
 https://taskwarrior.org/
 https://github.com/TailorDev/Watson
 """
-# {
-#     "description":"Dossiers campus france",
-#     "entry":"20160407T131359Z",
-#     "modified":"20160408T151257Z",
-#     "priority":"H",
-#     "project":"Work.GestionL3",
-#     "status":"pending",
-#     "tags":["dossiers"],
-#     "uuid":"ca1d938f-f3bc-4c9c-a808-aeca9cc3c842",
-#     "annotations":[
-#         {"entry":"20160408T142713Z","description":"Started task"},
-#         {"entry":"20160408T151257Z","description":"Stopped task"}]}
-#
-# {
-#     "description":"Dossiers campus france",
-#     "entry":"20160407T131359Z",
-#     "modified":"20160408T151257Z",
-#     "priority":"H",
-#     "project":"Work.GestionL3",
-#     "start":"20160408T154412Z",
-#     "status":"pending",
-#     "tags":["dossiers"],
-#     "uuid":"ca1d938f-f3bc-4c9c-a808-aeca9cc3c842",
-#     "annotations":[
-#         {"entry":"20160408T142713Z","description":"Started task"},
-#         {"entry":"20160408T151257Z","description":"Stopped task"},
-#         {"entry":"20160408T154412Z","description":"Started task"}]}
-
 
 import sys
 import json
