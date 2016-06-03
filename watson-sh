@@ -5,6 +5,7 @@
 # terms of the Do What The Fuck You Want To Public License, Version 2,
 # as published by Sam Hocevar. See http://www.wtfpl.net/ for more details.
 #
+# TODO: add tags to the context
 
 CONFIG_DIR=$HOME/.config/watson
 if [ ! -z $XDG_CONFIG_HOME ] ; then
@@ -38,6 +39,7 @@ Commands:
   to      Set the current ending date
 
   any valid watson commands
+  commands prefixed with '!' are dispatched to the shell
 
 EOC
     $WATSON help
@@ -151,6 +153,8 @@ function dispatch {
             fi
             ;;
         help) usage;;
+        !*)
+            ${cmd#\!} $@ ;;
         *) $WATSON $cmd $@;;
     esac
 }
