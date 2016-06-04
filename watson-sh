@@ -81,13 +81,13 @@ EOC
 
 function _filter_options {
     local options=""
-    if [ "x$CURRENT_PROJECT" != "x"  ] ; then
+    if [ -n "$CURRENT_PROJECT" ] ; then
         options="$options -p $CURRENT_PROJECT"
     fi
-    if [ "x$CURRENT_FROM" != "x" ] ; then
+    if [ -n "$CURRENT_FROM" ] ; then
         options="$options -f $(date -d "$CURRENT_FROM" -Iminutes)"
     fi
-    if [ "x$CURRENT_TO" != "x"  ] ; then
+    if [ -n "$CURRENT_TO" ] ; then
         options="$options -t $(date -d "$CURRENT_TO" -Iminutes)"
     fi
     echo $options
@@ -95,13 +95,13 @@ function _filter_options {
 
 function _prompt {
     local prompt="watson"
-    if [ "x$CURRENT_PROJECT" != "x" ] ; then
+    if [ -n "$CURRENT_PROJECT" ] ; then
         prompt="${prompt}:${CURRENT_PROJECT}"
     fi
-    if [ "x$CURRENT_FROM" != "x" ] ; then
+    if [ -n "$CURRENT_FROM" ] ; then
         prompt="${prompt}:${CURRENT_FROM}"
     fi
-    if [ "x$CURRENT_TO" != "x" ] ; then
+    if [ -n "$CURRENT_TO" ] ; then
         prompt="${prompt} → ${CURRENT_TO}"
     fi
     prompt="${prompt}> "
@@ -115,28 +115,28 @@ function dispatch {
         update) updatecomp;;
         quit|exit) exit 0;;
         ls)
-            if [ "x$CURRENT_PROJECT" != "x" ] ; then
+            if [ -n "$CURRENT_PROJECT" ] ; then
                 dispatch report $@
             else
                 dispatch projects $@
             fi
             ;;
         cd)
-            if [ "$1" == ".." -o "x$1" == "x" ] ; then
+            if [ "$1" == ".." -o -z "$1" ] ; then
                 CURRENT_PROJECT='';
             else
                 CURRENT_PROJECT=$1
             fi
             ;;
         from)
-            if [ "x$1" == "x" ] ; then
+            if [ -z "$1" ] ; then
                 CURRENT_FROM='';
             else
                 CURRENT_FROM="$@"
             fi
             ;;
         to)
-            if [ "x$1" == "x" ] ; then
+            if [ -z "$1" ] ; then
                 CURRENT_TO='';
             else
                 CURRENT_TO="$@"
@@ -146,7 +146,7 @@ function dispatch {
         log) $WATSON log $(_filter_options) $@ ;;
         report) $WATSON report $(_filter_options) $@ ;;
         start)
-            if [ "x$CURRENT_PROJECT" != "x" ] ; then
+            if [ -n "$CURRENT_PROJECT" ] ; then
                 $WATSON start "$CURRENT_PROJECT" $@
             else
                 $WATSON start "$@"

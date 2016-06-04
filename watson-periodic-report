@@ -36,7 +36,7 @@ Print a weekly report for the last 10 weeks
 EOC
 }
 
-case $1 in 
+case $1 in
     -h|--help) usage; exit 0;;
 esac
 
