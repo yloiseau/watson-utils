@@ -1,4 +1,7 @@
 LOCAL_BIN=$(HOME)/bin
+TASKDATA ?= $(HOME)/.local/share/task
+TASK_HOOKS=$(TASKDATA)/hooks
+I3_CONFIG=$(HOME)/.config/i3
 
 check_watson:
 	@which watson > /dev/null && echo "watson \033[32mOK\033[00m" || echo "watson \033[31mNOT FOUND\033[00m"
@@ -18,13 +21,13 @@ $(LOCAL_BIN)/%: %
 	@echo "Install $< to $@"
 	@install -m 555 $< $@
 
-install: $(LOCAL_BIN)/watson-sh $(LOCAL_BIN)/watson-notify $(LOCAL_BIN)/watson-periodic-report $(HOME)/.task/hooks/on-modify-watson.py $(HOME)/.config/i3/watson-status
+install: $(LOCAL_BIN)/watson-sh $(LOCAL_BIN)/watson-notify $(LOCAL_BIN)/watson-periodic-report $(TASK_HOOKS)/on-modify-watson.py $(I3_CONFIG)/watson-status
 
-$(HOME)/.task/hooks/on-modify-watson.py: on-modify-watson.py
+$(TASK_HOOKS)/on-modify-watson.py: on-modify-watson.py
 	@echo "Install $< to $@"
 	@install -m 555 $< $@
 
-$(HOME)/.config/i3/watson-status: watson-status
+$(I3_CONFIG)/watson-status: watson-status
 	@echo "Install $< to $@"
 	@install -m 555 $< $@
 
