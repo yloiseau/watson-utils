@@ -36,7 +36,21 @@ and use
 
     QUESTION_MESSAGE="$(shuf -n 1 $CONFIG_DIR/messages)"
 
-in the `$WATSON_DIR/alert` file.
+in the `$WATSON_DIR/alert` file. If you use a command-line task management tool, like [Taskwarrior](http://taskwarrior.org/), it's easy to display the next task to do in the notification. For taskwarrior, I use the following `QUESTION_MESSAGE`:
+
+    QUESTION_MESSAGE="$(shuf -n 1 $CONFIG_DIR/messages)\n\n<b>TODO:</b>\n$(task rc.verbose=nothing now)"
+
+with the custom `now` report defined as:
+
+    report.now.description=To do now
+    report.now.columns=id,description.desc
+    report.now.filter=status:pending and limit:3
+    report.now.sort=urgency-
+
+to display the next 3 tasks (description and ID).
+    
+
+The notification can be suspended for a short period of time using the `--snooze` option.
 
 Dependency:
 - `notify-send`: (`libnotify-bin` on Debian)
