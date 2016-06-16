@@ -81,6 +81,16 @@ Save in e.g. `~/.config/i3/watson-status` and add
 to your conky configuration file.
 
 
+Another tip that don't deserve a file here: I bind `ctrl+alt+delete` to a small script that stop `watson`, snooze the notification and lock the screen. When unlocked, the notification is activated.
+
+    #!/bin/bash
+    watson stop
+    watson-notify -s 10 hours
+    mpc pause
+    i3lock -f -n -c 000000
+    watson-notify -a
+
+
 ## `on-modify-watson.py`
 
 A [Taskwarrior](http://taskwarrior.org/) hook to start a watson task according to a taskwarrior one.
