@@ -1,0 +1,124 @@
+#!/usr/bin/env python3
+"""
+Tool to convert watson frames to other format.
+
+Usage:
+
+    watson-convert <format>
+
+The formats currently supported are:
+
+- icalendar
+- ledger (see http://ledger-cli.org)
+
+These two formats can be used to create alternative reports. For instace:
+- to display a calendar of the work done in june 2016:
+
+    watson-convert ical |
+        ical2html -d -m -l -z Europe/Paris 20160601 P4W > tasks.html
+
+- to display the relative time spent on dev tasks by projects for this month:
+
+    watson-convert ledger |
+        ledger -f - balance --begin "this month" --percent tag dev
+
+This script supose that the watson "project" field has the form:
+
+    [task]@project[.subject]
+
+For instance `Write unit tests@MySuperApp.NewFeature` (this is the format used
+by the taskwarrior hook).
+
+"""
+
+import sys
+import os
+
+from operator import attrgetter
+from itertools import chain
+
+from watson import Watson
+
+
+__author__ = "Yannick Loiseau <me@yloiseau.net>"
+__version__ = "0.1"
+
+
+def frame_to_ledger(frame):
+    """
+    Convert a frame into a ledger transaction
+    """
+    # TODO: stop message in a note comment
+    return '\n'.join([
+        "{date} ({id})  {desc}".format(
+            date=frame.start.strftime("%Y/%m/%d"),
+            id=frame.id,
+            desc=frame.project.split('@')[0]),
+        "    ; :{}:".format(":".join(frame.tags)),
+        "    ({project}) \t{duration:.0f}s".format(
+            project=frame.project.split('@')[1].replace('.', ':'),
+            duration=(frame.stop - frame.start).total_seconds()),
+        ""])
+
+
+def to_ledger(frames):
+    return '\n'.join(map(frame_to_ledger, frames))
+
+
+def to_ical(frames):
+    return '\n'.join(chain(
+        [
+            "BEGIN:VCALENDAR",
+            "VERSION:2.0",
+            "PRODID:-//Watson utils//Version %s//EN" % __version__,
+        ],
+        map(frame_to_ical, frames),
+        ["END:VCALENDAR", ""]))
+
+
+def frame_to_ical(frame):
+    # TODO: "DESCRIPTION:" with the stop message
+    return '\n'.join([
+        "BEGIN:VEVENT",
+        "SUMMARY:%s" % frame.project.split('@')[0],
+        "LOCATION:%s" % frame.project.split('@')[1],
+        "DTSTART;VALUE=DATE-TIME:%s" % frame.start.strftime("%Y%m%dT%H%M%S"),
+        "DTEND;VALUE=DATE-TIME:%s" % frame.stop.strftime("%Y%m%dT%H%M%S"),
+        "DTSTAMP;VALUE=DATE-TIME:%s" % frame.updated_at.strftime("%Y%m%dT%H%M%S"),
+        "UID:%s" % frame.id,
+        "CATEGORIES:%s" % ','.join(frame.tags),
+        "END:VEVENT"])
+
+
+CONVERTERS = {
+    "ledger": to_ledger,
+    "ical": to_ical
+}
+
+
+def main(args):
+    if len(args) < 2:
+        sys.stderr.write("No format given\n")
+        sys.stderr.write("Supported formats: %s\n" %
+                         ", ".join(CONVERTERS.keys()))
+        return 1
+    fmt = args[1]
+    if fmt in ("-h", "--help"):
+        print("{}  Version {} ({})".format(args[0], __version__, __author__))
+        print(__doc__)
+        return 0
+    if fmt in ("-v", "--version"):
+        print(args[0] + " Version " + __version__)
+        return 0
+    if fmt not in CONVERTERS:
+        sys.stderr.write("Unknown format '%s'\n" % fmt)
+        sys.stderr.write("Supported formats: %s\n" %
+                         ", ".join(CONVERTERS.keys()))
+        return 1
+
+    watson = Watson(config_dir=os.environ.get('WATSON_DIR'))
+    sys.stdout.write(CONVERTERS[fmt](sorted(watson.frames,
+                                            key=attrgetter('start'))))
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))
