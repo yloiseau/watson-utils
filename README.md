@@ -104,7 +104,7 @@ To install, copy in `$HOME/.task/hooks/on-modify-watson.py` and make executable.
 
 ## `watson-convert`
 
-A tool to convert watson frames to other format.
+A tool to convert watson frames to other formats.
 
 Usage:
 
