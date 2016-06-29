@@ -118,13 +118,17 @@ The formats currently supported are:
 These two formats can be used to create alternative reports. For instance:
 - to display a calendar of the work done in June 2016:
 
+
     watson-convert ical |
         ical2html -d -m -l -z Europe/Paris 20160601 P4W > tasks.html
 
+
 - to display the relative time spent on dev tasks by projects for this month:
+
 
     watson-convert ledger |
         ledger -f - balance --begin "this month" --percent tag dev
+
 
 This script suppose that the watson "project" field has the form:
 
