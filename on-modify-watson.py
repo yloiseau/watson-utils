@@ -50,8 +50,8 @@ def start_watson(task):
         watson.stop()
     watson.start(
         "@".join([
-            task.get("project", "None").strip(),
-            task.get("description", "").strip()]),
+            task.get("description", "").strip(),
+            task.get("project", "None").strip()]),
         [t.strip() for t in task.get("tags") if t.strip() != '' ])
     watson.save()
 
