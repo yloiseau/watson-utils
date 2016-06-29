@@ -11,8 +11,8 @@ The formats currently supported are:
 - icalendar
 - ledger (see http://ledger-cli.org)
 
-These two formats can be used to create alternative reports. For instace:
-- to display a calendar of the work done in june 2016:
+These two formats can be used to create alternative reports. For instance:
+- to display a calendar of the work done in June 2016:
 
     watson-convert ical |
         ical2html -d -m -l -z Europe/Paris 20160601 P4W > tasks.html
@@ -22,7 +22,7 @@ These two formats can be used to create alternative reports. For instace:
     watson-convert ledger |
         ledger -f - balance --begin "this month" --percent tag dev
 
-This script supose that the watson "project" field has the form:
+This script suppose that the watson "project" field has the form:
 
     [task]@project[.subject]
 

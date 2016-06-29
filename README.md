@@ -102,6 +102,38 @@ When stopping a task in taskwarrior, the hook stops the watson project.
 To install, copy in `$HOME/.task/hooks/on-modify-watson.py` and make executable.
 
 
+## `watson-convert`
+
+A tool to convert watson frames to other format.
+
+Usage:
+
+    watson-convert <format>
+
+The formats currently supported are:
+
+- icalendar
+- [ledger](http://ledger-cli.org)
+
+These two formats can be used to create alternative reports. For instance:
+- to display a calendar of the work done in June 2016:
+
+    watson-convert ical |
+        ical2html -d -m -l -z Europe/Paris 20160601 P4W > tasks.html
+
+- to display the relative time spent on dev tasks by projects for this month:
+
+    watson-convert ledger |
+        ledger -f - balance --begin "this month" --percent tag dev
+
+This script suppose that the watson "project" field has the form:
+
+    [task]@project[.subject]
+
+For instance `Write unit tests@MySuperApp.NewFeature` (this is the format used
+by the taskwarrior hook).
+
+
 ## Licence
 
 These scripts are released under the Do What The Fuck You Want To Public License.
