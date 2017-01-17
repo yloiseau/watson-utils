@@ -155,7 +155,13 @@ function notify {
 }
 
 #------------------------------------
-mkdir -p "${RUNTIME}"
+if [ -d $(dirname ${RUNTIME}) ] ; then
+    mkdir -p "${RUNTIME}"
+else
+    # not in a WM session
+    exit 0
+fi
+
 case $1 in
     -h|--help) usage; exit 0;;
     -v|--version) echo "$(basename $0) $VERSION" ; exit 0;;

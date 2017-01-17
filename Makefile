@@ -4,12 +4,12 @@ TASK_HOOKS=$(TASKDATA)/hooks
 I3_CONFIG=$(HOME)/.config/i3
 
 ALL_FILES = \
-			$(LOCAL_BIN)/watson-sh \
-			$(LOCAL_BIN)/watson-notify \
-			$(LOCAL_BIN)/watson-convert \
-			$(LOCAL_BIN)/watson-periodic-report \
-			$(TASK_HOOKS)/on-modify-watson.py \
-			$(I3_CONFIG)/watson-status
+    $(LOCAL_BIN)/watson-sh \
+    $(LOCAL_BIN)/watson-notify \
+    $(LOCAL_BIN)/watson-convert \
+    $(LOCAL_BIN)/watson-periodic-report \
+    $(TASK_HOOKS)/on-modify-watson.py \
+    $(I3_CONFIG)/watson-status
 
 check_watson:
 	@which watson > /dev/null && echo "watson \033[32mOK\033[00m" || echo "watson \033[31mNOT FOUND\033[00m"
