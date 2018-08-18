@@ -21,7 +21,6 @@ watson status |
 sed -r '
     s!^Project !!g;
     s!(.+)\s+started !\1 (!g;
-    s! ago .*!)!g
+    s! ago .*!)!g;
+    s!^No project started$!!g;
     '
-
-
