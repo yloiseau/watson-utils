@@ -8,10 +8,11 @@ Usage:
 
 The formats currently supported are:
 
-- icalendar
-- ledger (see http://ledger-cli.org)
+- icalendar (https://tools.ietf.org/html/rfc2445)
+- ledger (http://ledger-cli.org/)
+- timewarrior (https://timewarrior.net/)
 
-These two formats can be used to create alternative reports. For instance:
+These formats can be used to create alternative reports. For instance:
 - to display a calendar of the work done in June 2016:
 
     watson-convert ical |
@@ -28,7 +29,6 @@ This script suppose that the watson "project" field has the form:
 
 For instance `Write unit tests@MySuperApp.NewFeature` (this is the format used
 by the taskwarrior hook).
-
 """
 
 import sys
@@ -36,6 +36,7 @@ import os
 
 from operator import attrgetter
 from itertools import chain
+from datetime import timezone
 
 from watson import Watson
 
@@ -90,9 +91,34 @@ def frame_to_ical(frame):
         "END:VEVENT"])
 
 
+def to_timew(frames):
+    return '\n'.join(map(frame_to_timew, frames))
+
+
+def frame_to_timew(frame):
+    tags = list(frame.tags)
+    if '@' in frame.project:
+        title, project = frame.project.split('@')
+    else:
+        project = ''
+        title = frame.project
+
+    if title:
+        tags.append(title)
+    if project:
+        tags.append(project)
+
+    return 'inc {start:%Y%m%dT%H%M%SZ} - {end:%Y%m%dT%H%M%SZ} # {tags}'.format(
+        start=frame.start.astimezone(timezone.utc),
+        end=frame.stop.astimezone(timezone.utc),
+        tags=' '.join({'"%s"' % t for t in tags})
+    )
+
+
 CONVERTERS = {
     "ledger": to_ledger,
-    "ical": to_ical
+    "ical": to_ical,
+    'timew': to_timew
 }
 
 
@@ -119,6 +145,7 @@ def main(args):
     watson = Watson(config_dir=os.environ.get('WATSON_DIR'))
     sys.stdout.write(CONVERTERS[fmt](sorted(watson.frames,
                                             key=attrgetter('start'))))
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
