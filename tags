@@ -1,0 +1,30 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ALL_FILES	Makefile	/^ALL_FILES = \\$/;"	m
+I3_CONFIG	Makefile	/^I3_CONFIG=$(HOME)\/.config\/i3$/;"	m
+LOCAL_BIN	Makefile	/^LOCAL_BIN=$(HOME)\/bin$/;"	m
+TASKDATA	Makefile	/^TASKDATA ?= $(HOME)\/.local\/share\/task$/;"	m
+TASK_HOOKS	Makefile	/^TASK_HOOKS=$(TASKDATA)\/hooks$/;"	m
+_check_snooze	watson-notify	/^function _check_snooze {$/;"	f
+_filter_options	watson-sh	/^function _filter_options {$/;"	f
+_prompt	watson-sh	/^function _prompt {$/;"	f
+activate	watson-notify	/^function activate {$/;"	f
+config	watson-notify	/^function config {$/;"	f
+dispatch	watson-sh	/^function dispatch {$/;"	f
+is_starting	on-modify-watson.py	/^def is_starting(old, new):$/;"	f
+is_stopping	on-modify-watson.py	/^def is_stopping(old, new):$/;"	f
+load_json	on-modify-watson.py	/^def load_json():$/;"	f
+main	on-modify-watson.py	/^def main(args):$/;"	f
+notify	watson-notify	/^function notify {$/;"	f
+snooze	watson-notify	/^function snooze {$/;"	f
+start_watson	on-modify-watson.py	/^def start_watson(task):$/;"	f
+status	watson-notify	/^function status {$/;"	f
+stop_watson	on-modify-watson.py	/^def stop_watson():$/;"	f
+updatecomp	watson-sh	/^function updatecomp {$/;"	f
+usage	watson-notify	/^function usage {$/;"	f
+usage	watson-periodic-report	/^function usage {$/;"	f
+usage	watson-sh	/^function usage {$/;"	f

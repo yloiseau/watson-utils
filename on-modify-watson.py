@@ -62,7 +62,7 @@ def main(args):
         print(json.dumps(new))
         if is_stopping(old, new):
             stop_watson()
-            print("Watson project {} {} stoped".format(
+            print("Watson project {} {} stopped".format(
                 new.get("project"), new.get("tags")))
         elif is_starting(old, new):
             start_watson(new)
