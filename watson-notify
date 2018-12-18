@@ -51,7 +51,7 @@ Usage:
 1a. Customize DISPLAY if needed
 2. Set a cron task to run the script. E.g. (every 5min)
 
-    */5 *  *   *   *     $HOME/bin/watson-notify
+    */5 *  *   *   *     $0
 
 Options:
   -h|--help          display this help
