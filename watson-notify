@@ -139,9 +139,9 @@ function notify {
     $WATSON_STATUS |
     sed -r '
         s!^Project !!g;
-        s!([^ ]+).+started .* ago \(([^)]+)\)!\1 \2!g
+        s!([^ ]+).+started[.]? .* ago \(([^)]+)\)!\1 \2!g
     ' | while read name date; do
-        if [ $name == "No" -a "$date" == "project started" ] ; then
+        if [ $name == "No" -a "$date" == "project started." ] ; then
             $NOTIFY $QUESTION_NOTIF "Watson" "$QUESTION_MESSAGE"
             exit 0
         fi
